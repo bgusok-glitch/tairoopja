@@ -855,15 +855,32 @@
   .caption-field::placeholder { color: var(--chrome-3); text-transform: none; letter-spacing: 1px; }
 
   /* Placeholder polish */
-  .placeholder { color: var(--ink-soft); }
+  .placeholder {
+    color: var(--ink-soft);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 24px 22px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
   .placeholder .big {
     background: var(--chrome);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     filter: drop-shadow(0 0 18px rgba(77, 229, 255, 0.45));
+    font-size: clamp(38px, 10vw, 64px);
+    margin-bottom: 12px;
   }
-  .placeholder p { font-size: 14px; letter-spacing: 0.3px; }
+  .placeholder p {
+    font-size: clamp(12px, 3.4vw, 15px);
+    letter-spacing: 0.3px;
+    line-height: 1.6;
+    max-width: 28ch;
+    margin: 0 auto;
+  }
   .placeholder b {
     font-family: 'Unbounded', sans-serif;
     background: var(--holo);
@@ -871,6 +888,18 @@
     background-clip: text;
     color: transparent;
     font-weight: 700;
+    /* prevent the gradient inline block from forcing horizontal overflow */
+    display: inline;
+    white-space: nowrap;
+  }
+
+  /* Ensure flex items inside the stage can actually shrink */
+  .stage > * { min-width: 0; max-width: 100%; }
+
+  @media (max-width: 520px) {
+    .placeholder { padding: 18px 14px; }
+    .placeholder p { font-size: 12px; max-width: 24ch; }
+    .placeholder .big { font-size: 42px; margin-bottom: 8px; }
   }
 
   /* Gradient frame chip */
@@ -913,7 +942,7 @@
         <div class="countdown" id="countdown">3</div>
         <div class="placeholder" id="placeholder">
           <div class="big">◇</div>
-          <p>กด <b>Start Camera</b> เพื่อเริ่มเซสชัน<br>กล้องอยู่บนเครื่องคุณ · ไม่มีการอัปโหลดใดๆ</p>
+          <p>กดปุ่ม <b>Start</b> เพื่อเริ่ม<br>กล้องอยู่บนเครื่องคุณ ไม่อัปโหลดที่ไหน</p>
         </div>
       </div>
 
