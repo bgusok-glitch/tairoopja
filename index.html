@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🍿 NextStream — อัพเดทใหม่บน Netflix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff8f1;
+    --bg-soft: #fff1e3;
+    --card: #ffffff;
+    --ink: #2d2a3a;
+    --ink-soft: #6b6779;
+    --primary: #ff7a59;
+    --primary-dark: #f25c3b;
+    --accent: #ffd166;
+    --mint: #7ed6a0;
+    --pink: #ff9ec7;
+    --lavender: #b6a8ff;
+    --sky: #8ec5ff;
+    --shadow: 0 8px 30px rgba(255, 122, 89, 0.12);
+    --shadow-hover: 0 14px 40px rgba(255, 122, 89, 0.22);
+    --radius: 18px;
+    --radius-lg: 26px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Prompt', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background:
+      radial-gradient(900px 500px at -10% -10%, #ffe1cc 0%, transparent 60%),
+      radial-gradient(800px 500px at 110% 0%, #ffe9b8 0%, transparent 55%),
+      var(--bg);
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 16px 22px 80px;
+  }
+
+  /* ===== Header ===== */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 4px 16px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.2px;
+  }
+  .logo-mark {
+    width: 42px; height: 42px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: grid; place-items: center;
+    color: white;
+    font-size: 22px;
+    box-shadow: var(--shadow);
+  }
+  .logo small {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--ink-soft);
+    margin-top: -2px;
+  }
+  .search {
+    flex: 1;
+    max-width: 420px;
+    position: relative;
+  }
+  .search input {
+    width: 100%;
+    padding: 12px 16px 12px 44px;
+    border: 1.5px solid transparent;
+    background: var(--card);
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    box-shadow: var(--shadow);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .search input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: var(--shadow-hover);
+  }
+  .search::before {
+    content: "🔍";
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    padding: 20px 28px;
+    background: linear-gradient(120deg, #ffb199 0%, #ff7a59 55%, #ff5e80 100%);
+    color: white;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 20px;
+    align-items: center;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .hero::before, .hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    opacity: .25;
+    filter: blur(2px);
+  }
+  .hero::before {
+    width: 220px; height: 220px;
+    background: var(--accent);
+    top: -60px; right: -40px;
+  }
+  .hero::after {
+    width: 160px; height: 160px;
+    background: var(--pink);
+    bottom: -50px; left: 30%;
+  }
+  .hero-content { position: relative; z-index: 2; }
+  .hero .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(255,255,255,.25);
+    backdrop-filter: blur(8px);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .hero p {
+    font-size: 13px;
+    opacity: .95;
+    margin-bottom: 12px;
+    max-width: 480px;
+  }
+  .hero .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    background: white;
+    color: var(--primary-dark);
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+    transition: transform .15s;
+  }
+  .hero .cta:hover { transform: translateY(-2px); }
+
+  .hero-emoji {
+    font-size: 80px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,.18));
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* ===== Section title ===== */
+  .section-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .section-title h2 {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .section-title span {
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  /* ===== Category chips ===== */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .chip {
+    padding: 9px 16px;
+    background: var(--card);
+    color: var(--ink);
+    border: 1.5px solid transparent;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(255, 122, 89, 0.08);
+    transition: all .18s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chip:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+  }
+  .chip.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: var(--shadow);
+  }
+
+  /* ===== Movie grid ===== */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 22px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform .2s, box-shadow .2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .poster {
+    aspect-ratio: 2 / 3;
+    background: linear-gradient(135deg, var(--bg-soft), #ffe6cf);
+    display: grid;
+    place-items: center;
+    font-size: 76px;
+    position: relative;
+    overflow: hidden;
+  }
+  .poster .release-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255,255,255,.95);
+    color: var(--primary-dark);
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .poster .fav {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.95);
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: transform .15s;
+  }
+  .poster .fav:hover { transform: scale(1.15); }
+  .poster .fav.on { background: var(--primary); }
+
+  .card-body {
+    padding: 14px 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .card .meta {
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card .meta .dot {
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: var(--ink-soft);
+    opacity: .5;
+  }
+  .card .genre-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 6px;
+  }
+  .genre-tag {
+    font-size: 11px;
+    padding: 3px 9px;
+    background: var(--bg-soft);
+    color: var(--ink);
+    border-radius: 999px;
+    font-weight: 500;
+  }
+  .card .rating {
+    margin-top: auto;
+    padding-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+  .stars { color: var(--accent); font-weight: 600; }
+  .countdown {
+    color: var(--primary-dark);
+    font-weight: 600;
+  }
+
+  /* ===== Modal ===== */
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(45, 42, 58, .55);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+    animation: fade .2s;
+  }
+  .modal-bg.open { display: flex; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    max-width: 720px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    animation: pop .25s ease-out;
+  }
+  @keyframes pop {
+    from { transform: scale(.94); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal-header {
+    height: 200px;
+    background: linear-gradient(135deg, var(--primary), var(--pink));
+    display: grid;
+    place-items: center;
+    font-size: 110px;
+    position: relative;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,.95);
+    font-size: 18px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  .modal-body { padding: 26px 30px 30px; }
+  .modal-body h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .modal-body .modal-meta {
+    color: var(--ink-soft);
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .modal-body .synopsis {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed #e8d9c4;
+  }
+  .info-item .label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 4px;
+  }
+  .info-item .value {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* ===== Empty state ===== */
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-soft);
+  }
+  .empty .em { font-size: 64px; margin-bottom: 12px; }
+
+  /* ===== Footer ===== */
+  footer {
+    text-align: center;
+    margin-top: 50px;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 720px) {
+    .hero { grid-template-columns: 1fr; padding: 28px 24px; }
+    .hero h1 { font-size: 26px; }
+    .hero-emoji { font-size: 90px; }
+    .topbar { flex-wrap: wrap; }
+    .search { max-width: 100%; order: 3; flex-basis: 100%; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+    .poster { font-size: 56px; }
+    .card h3 { font-size: 14px; }
+    .modal-body { padding: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-mark">🎬</div>
+      <div>
+        NextStream
+        <small>อัพเดทใหม่บน Netflix</small>
+      </div>
+    </div>
+    <div class="search">
+      <input id="searchInput" type="text" placeholder="ค้นหาชื่อเรื่อง..." />
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="badge">🔴 LIVE บน Netflix</span>
+      <h1 id="heroTitle">ซีรีส์-หนังใหม่<br/>บน Netflix เดือนนี้!</h1>
+      <p id="heroDesc">รวมหนัง ซีรีส์ อนิเมะ สารคดี และเรียลลิตี้ใหม่บน Netflix แยกหมวดให้ครบ พร้อมเรื่องย่อและวันที่เข้า</p>
+      <button class="cta" onclick="document.getElementById('movies').scrollIntoView({behavior:'smooth'})">
+        เริ่มดูเลย ✨
+      </button>
+    </div>
+    <div class="hero-emoji" id="heroEmoji">📺</div>
+  </section>
+
+  <!-- Categories + Grid -->
+  <div class="chips" id="chips"></div>
+
+  <div class="section-title">
+    <h2 id="gridTitle">หนังทั้งหมด</h2>
+    <span id="resultCount">กำลังโหลด...</span>
+  </div>
+  <div class="grid" id="movies"></div>
+
+  <footer>
+    📺 NextStream · ข้อมูลจาก
+    <a href="https://www.sanook.com/movie/188370/" target="_blank" style="color:var(--primary-dark);text-decoration:none;font-weight:500">Sanook (พ.ค.)</a>
+    และ
+    <a href="https://www.sanook.com/movie/188582/" target="_blank" style="color:var(--primary-dark);text-decoration:none;font-weight:500">Sanook (มิ.ย.)</a>
+    · อัพเดท Netflix พ.ค.-มิ.ย. 2026
+  </footer>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target.id==='modalBg') closeModal()">
+  <div class="modal">
+    <div class="modal-header" id="modalHeader">
+      <span id="modalEmoji">🎬</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <h2 id="modalTitle"></h2>
+      <div class="modal-meta" id="modalMeta"></div>
+      <p class="synopsis" id="modalSynopsis"></p>
+      <div class="info-grid" id="modalInfo"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== Data =====
+  const CATEGORIES = [
+    { key: 'all',         label: 'ทั้งหมด',  emoji: '🎬', match: () => true },
+    { key: 'series',      label: 'ซีรีส์',   emoji: '📺', match: m => m.type === 'series' },
+    { key: 'movie',       label: 'หนัง',      emoji: '🎥', match: m => m.type === 'movie' },
+    { key: 'thai',        label: 'ไทย',       emoji: '🇹🇭', match: m => m.country === 'thai' },
+    { key: 'korean',      label: 'เกาหลี',   emoji: '🇰🇷', match: m => m.country === 'korean' },
+    { key: 'anime',       label: 'อนิเมะ',   emoji: '🍙', match: m => m.type === 'anime' },
+    { key: 'documentary', label: 'สารคดี',   emoji: '🎞️', match: m => m.type === 'documentary' },
+    { key: 'reality',     label: 'วาไรตี้',  emoji: '🎤', match: m => m.type === 'reality' },
+  ];
+
+
+  // ข้อมูลจริงจาก Sanook (sanook.com/movie/188370, 188582) — Netflix พ.ค. - มิ.ย. 2026
+  const MOVIES = [
+    // ===== พฤษภาคม 2026 =====
+    {
+      id: 1, title: 'A Good Girl\'s Guide to Murder S2',
+      thaiTitle: 'คู่มือฆาตกรรมฉบับเด็กดี ซีซั่น 2',
+      emoji: '🔍', type: 'series', country: 'western', genre: 'ระทึกขวัญ',
+      release: '2026-05-27',
+      duration: '8 ตอน', rating: 4.5,
+      cast: 'Emma Myers',
+      synopsis: 'นักสืบมือสมัครเล่นกลับมาอีกครั้ง คราวนี้ตามหาเพื่อนที่หายตัวไป ระหว่างรอคำตัดสินจากคดีก่อนหน้านี้',
+      poster: 'linear-gradient(135deg, #614385, #516395)'
+    },
+    {
+      id: 2, title: 'Jae-Seok\'s B&B Rules',
+      thaiTitle: 'วาไรตี้ปุบปับที่บ้านพักแจซอก',
+      emoji: '🏡', type: 'reality', country: 'korean', genre: 'วาไรตี้',
+      release: '2026-05-26',
+      duration: 'รายการ', rating: 4.4,
+      cast: 'ยูแจซอก',
+      synopsis: 'พิธีกรชื่อดังเปิดเกสต์เฮ้าส์แห่งแรกของตัวเอง พร้อมความท้าทายแปลก ๆ ที่เตรียมไว้ให้แขกที่มาพัก',
+      poster: 'linear-gradient(135deg, #ff9a9e, #fad0c4)'
+    },
+    {
+      id: 3, title: 'Food Truck Stolen Love',
+      thaiTitle: 'ฟู้ดทรัค ลัก (รัก) หมูเด้ง',
+      emoji: '🚚', type: 'series', country: 'thai', genre: 'โรแมนติก-คอเมดี้',
+      release: '2026-05-28',
+      duration: '10 ตอน', rating: 4.2,
+      cast: 'นักแสดงไทย',
+      synopsis: 'การเดินทางสุดอลหม่านของเพื่อนสามคนที่เปลี่ยนฟู้ดทรัคไทยให้กลายเป็นการผจญภัยค้นหาความหมายของครอบครัว',
+      poster: 'linear-gradient(135deg, #f6d365, #fda085)'
+    },
+    {
+      id: 4, title: 'Rafael Nadal',
+      thaiTitle: 'ราฟาเอล นาดาล',
+      emoji: '🎾', type: 'documentary', country: 'western', genre: 'กีฬา',
+      release: '2026-05-29',
+      duration: '120 นาที', rating: 4.7,
+      cast: 'Rafael Nadal',
+      synopsis: 'สารคดีตำนานเทนนิสที่เล่าถึงความสำเร็จตลอดอาชีพและฤดูกาลสุดท้ายในวงการเทนนิสอาชีพ',
+      poster: 'linear-gradient(135deg, #f7971e, #ffd200)'
+    },
+    {
+      id: 5, title: 'K-Pop\'s Dad',
+      thaiTitle: 'คุณพ่อเคป๊อป',
+      emoji: '🎤', type: 'movie', country: 'korean', genre: 'คอเมดี้',
+      release: '2026-05-30',
+      duration: '105 นาที', rating: 4.1,
+      cast: '-',
+      synopsis: 'นักดนตรีอเมริกันเข้าร่วมแข่งขัน K-pop และค้นพบว่าหนึ่งในผู้แข่งขันคือลูกชายของตัวเองที่ไม่เคยรู้จัก',
+      poster: 'linear-gradient(135deg, #ff9ec7, #ff6a88)'
+    },
+    {
+      id: 6, title: 'The WONDERfools',
+      thaiTitle: 'คนมหัศจรรย์พลังรั่ว',
+      emoji: '🦸', type: 'series', country: 'korean', genre: 'แอ็คชั่น-คอเมดี้',
+      release: '2026-05-15',
+      duration: '8 ตอน', rating: 4.6,
+      cast: 'นักแสดงเกาหลี',
+      synopsis: 'ซีรีส์แอ็คชั่นตลกหลุดโลกในยุคเปลี่ยนผ่านศตวรรษ เมื่อประชาชนทั่วไปได้รับพลังเหนือธรรมชาติแบบสุดเฮี้ยน',
+      poster: 'linear-gradient(135deg, #4facfe, #00f2fe)'
+    },
+    {
+      id: 7, title: 'Doraemon',
+      thaiTitle: 'โดราเอมอน',
+      emoji: '🤖', type: 'anime', country: 'japanese', genre: 'ครอบครัว',
+      release: '2026-05-15',
+      duration: 'ซีรีส์', rating: 4.8,
+      cast: 'พากย์ญี่ปุ่น',
+      synopsis: 'หุ่นยนต์แมวจากอนาคตช่วยเหลือเพื่อนมนุษย์ตัวเล็กด้วยของวิเศษจากกระเป๋าสี่มิติ ความฮา ความซึ้งครบทุกตอน',
+      poster: 'linear-gradient(135deg, #8ec5ff, #4facfe)'
+    },
+    {
+      id: 8, title: 'Devil May Cry: Season 2',
+      thaiTitle: 'เดวิล เมย์ คราย ซีซั่น 2',
+      emoji: '⚔️', type: 'anime', country: 'western', genre: 'แอ็คชั่น-แฟนตาซี',
+      release: '2026-05-12',
+      duration: '8 ตอน', rating: 4.5,
+      cast: '-',
+      synopsis: 'สงครามระหว่างสองโลกปะทุขึ้นอีกครั้ง Dante ต้องเผชิญหน้าทั้งปีศาจภายในและพี่น้องฝาแฝดที่ห่างเหิน',
+      poster: 'linear-gradient(135deg, #870000, #190a05)'
+    },
+    {
+      id: 9, title: 'Ladies First',
+      thaiTitle: 'ตื่นมาอีกที โลกนี้ผู้หญิงใหญ่',
+      emoji: '👠', type: 'movie', country: 'western', genre: 'คอเมดี้',
+      release: '2026-05-22',
+      duration: '110 นาที', rating: 4.0,
+      cast: 'Sacha Baron Cohen, Rosamund Pike',
+      synopsis: 'ผู้ชายตื่นมาในโลกคู่ขนานที่ผู้หญิงครองอำนาจทุกอย่าง เขาต้องปรับตัวกับบทบาททางเพศที่กลับด้านโดยสิ้นเชิง',
+      poster: 'linear-gradient(135deg, #fccb90, #d57eeb)'
+    },
+    {
+      id: 10, title: 'Longlegs',
+      thaiTitle: 'ถอดรหัสคลั่งอำมหิต',
+      emoji: '🔪', type: 'movie', country: 'western', genre: 'ระทึกขวัญ',
+      release: '2026-05-08',
+      duration: '101 นาที', rating: 4.4,
+      cast: 'Maika Monroe, Nicolas Cage',
+      synopsis: 'เจ้าหน้าที่ FBI ตามล่าฆาตกรต่อเนื่องที่ทิ้งร่องรอยลึกลับ และค้นพบความเชื่อมโยงส่วนตัวที่น่าขนลุก',
+      poster: 'linear-gradient(135deg, #232526, #414345)'
+    },
+
+    // ===== มิถุนายน 2026 =====
+    {
+      id: 11, title: 'The Rite',
+      thaiTitle: 'คนไล่ผี',
+      emoji: '✝️', type: 'movie', country: 'western', genre: 'สยองขวัญ',
+      release: '2026-06-02',
+      duration: '114 นาที', rating: 4.2,
+      cast: 'Anthony Hopkins',
+      synopsis: 'บาทหลวงอเมริกันฝึกฝนภายใต้ผู้ขับไล่ปีศาจตัวจริงในกรุงโรม เพื่อเรียนรู้การต่อสู้กับการสิงสู่ของวิญญาณชั่วร้าย',
+      poster: 'linear-gradient(135deg, #2c3e50, #4ca1af)'
+    },
+    {
+      id: 12, title: 'Michael Jackson: The Verdict',
+      thaiTitle: 'ไมเคิล แจ็กสัน: คำตัดสิน',
+      emoji: '🕺', type: 'documentary', country: 'western', genre: 'สารคดี-เพลง',
+      release: '2026-06-03',
+      duration: '95 นาที', rating: 4.3,
+      cast: '-',
+      synopsis: 'คนวงในเล่ารายละเอียดคดีฉาวของไมเคิล แจ็กสัน พร้อมเปิดเผยมรดกทางดนตรีอันซับซ้อนของราชาเพลงป๊อป',
+      poster: 'linear-gradient(135deg, #355c7d, #6c5b7b)'
+    },
+    {
+      id: 13, title: 'A Star Is Born',
+      thaiTitle: 'อะ สตาร์ อิส บอร์น',
+      emoji: '⭐', type: 'movie', country: 'western', genre: 'โรแมนติก',
+      release: '2026-06-04',
+      duration: '136 นาที', rating: 4.7,
+      cast: 'Lady Gaga, Bradley Cooper',
+      synopsis: 'นักร้องสาวผู้มีความฝันพบรักกับนักดนตรีดัง ขณะที่ดาวของเธอกำลังขึ้น แต่ของเขากำลังร่วงลง',
+      poster: 'linear-gradient(135deg, #ff9a9e, #ff6a88)'
+    },
+    {
+      id: 14, title: 'The Meg',
+      thaiTitle: 'เม็ก โคตรหลามพันล้านปี',
+      emoji: '🦈', type: 'movie', country: 'western', genre: 'แอ็คชั่น',
+      release: '2026-06-04',
+      duration: '113 นาที', rating: 4.1,
+      cast: 'Jason Statham',
+      synopsis: 'นักประดาน้ำเกษียณต้องกลับมาเผชิญหน้ากับฉลามยักษ์เมกาโลดอนยุคก่อนประวัติศาสตร์ที่คุกคามทั้งโลก',
+      poster: 'linear-gradient(135deg, #4facfe, #00c6fb)'
+    },
+    {
+      id: 15, title: 'Office Romance',
+      thaiTitle: 'ปิ๊งรักในออฟฟิศ',
+      emoji: '💼', type: 'movie', country: 'western', genre: 'โรแมนติก-คอเมดี้',
+      release: '2026-06-05',
+      duration: '108 นาที', rating: 4.3,
+      cast: 'Jennifer Lopez, Brett Goldstein',
+      synopsis: 'CEO หญิงทำงานหนักของสายการบินตกหลุมรักกับลูกน้องในออฟฟิศ ความสัมพันธ์ที่ต้องปกปิดจากทุกคน',
+      poster: 'linear-gradient(135deg, #ffecd2, #fcb69f)'
+    },
+    {
+      id: 16, title: 'รักนี้ไม่มีถั่วฝักยาว',
+      thaiTitle: 'รักนี้ไม่มีถั่วฝักยาว',
+      emoji: '🍳', type: 'series', country: 'thai', genre: 'โรแมนติก-คอเมดี้',
+      release: '2026-06-06',
+      duration: '10 ตอน', rating: 4.2,
+      cast: 'นักแสดงไทย',
+      synopsis: 'เชฟหนุ่มเจ้าเล่ห์พยายามมัดใจเชฟใหญ่จอมโหด เพื่อเลื่อนตำแหน่งในครัว แต่กลับโดนความรักเข้าเล่นซะเอง',
+      poster: 'linear-gradient(135deg, #84fab0, #8fd3f4)'
+    },
+    {
+      id: 17, title: 'ธาตรี',
+      thaiTitle: 'ธาตรี',
+      emoji: '👯', type: 'series', country: 'thai', genre: 'ดราม่า',
+      release: '2026-06-08',
+      duration: '12 ตอน', rating: 4.4,
+      cast: 'นักแสดงไทย',
+      synopsis: 'หญิงสาวสวมรอยเป็นเพื่อนสนิทที่บาดเจ็บสาหัส เพื่อรับมรดกก้อนโต แต่กลับนำไปสู่ผลลัพธ์ที่คาดไม่ถึง',
+      poster: 'linear-gradient(135deg, #b6a8ff, #8e7cc3)'
+    },
+    {
+      id: 18, title: 'The Evil Lawyer',
+      thaiTitle: 'ทนายปีศาจ',
+      emoji: '⚖️', type: 'series', country: 'korean', genre: 'ระทึกขวัญ',
+      release: '2026-06-11',
+      duration: '12 ตอน', rating: 4.6,
+      cast: 'นักแสดงเกาหลี',
+      synopsis: 'ทนายความหนุ่มถูกกล่าวหาว่าฆาตกรรม จึงจับมือกับ "ทนายฝ่ายปีศาจ" ใช้ช่องโหว่ทางกฎหมายเพื่อพิสูจน์ความบริสุทธิ์',
+      poster: 'linear-gradient(135deg, #cb2d3e, #ef473a)'
+    },
+    {
+      id: 19, title: 'Sweet Magnolias: Season 5',
+      thaiTitle: 'สวีท แมกโนเลีย หวาน กร้าว แกร่ง ซีซั่น 5',
+      emoji: '🌸', type: 'series', country: 'western', genre: 'ดราม่า',
+      release: '2026-06-11',
+      duration: '10 ตอน', rating: 4.5,
+      cast: 'JoAnna Garcia Swisher',
+      synopsis: 'สาว ๆ ทั้งสามไล่ตามความฝันร่วมกัน พร้อมรับมือกับความเปลี่ยนแปลงในฤดูร้อนของเมืองเล็กในรัฐเซาท์แคโรไลนา',
+      poster: 'linear-gradient(135deg, #fbc2eb, #a18cd1)'
+    },
+    {
+      id: 20, title: 'America\'s Sweethearts: S3',
+      thaiTitle: 'เชียร์ลีดเดอร์ดัลลัสคาวบอย ซีซั่น 3',
+      emoji: '📣', type: 'documentary', country: 'western', genre: 'สารคดี-กีฬา',
+      release: '2026-06-16',
+      duration: '7 ตอน', rating: 4.4,
+      cast: 'DCC Squad',
+      synopsis: 'ทีมเชียร์ลีดเดอร์ในตำนานต้องรับมือกับพลวัตในทีม ชื่อเสียง และแฟนคลับสุดเข้มข้น ตลอดซีซั่นที่ทรหดที่สุด',
+      poster: 'linear-gradient(135deg, #2193b0, #6dd5ed)'
+    },
+    {
+      id: 21, title: 'Scam Game',
+      thaiTitle: 'เกมโกงเกมส์',
+      emoji: '🎲', type: 'series', country: 'korean', genre: 'ระทึกขวัญ',
+      release: '2026-06-18',
+      duration: '10 ตอน', rating: 4.5,
+      cast: 'นักแสดงเกาหลี',
+      synopsis: 'จอมต้มตุ๋นถูกเกณฑ์เข้าสู่ปฏิบัติการอาชญากรรม และพบเบาะแสเกี่ยวกับพ่อที่หายตัวไป ขณะต้องเผชิญกลโกงสุดอันตราย',
+      poster: 'linear-gradient(135deg, #780206, #061161)'
+    },
+    {
+      id: 22, title: 'The Creator',
+      thaiTitle: 'เดอะ ครีเอเตอร์',
+      emoji: '🤖', type: 'movie', country: 'western', genre: 'ไซไฟ',
+      release: '2026-06-20',
+      duration: '133 นาที', rating: 4.4,
+      cast: 'John David Washington',
+      synopsis: 'ทหารต้องทำลายอาวุธ AI ที่อันตรายที่สุดของศัตรู ซึ่งกลับเป็นเด็กหญิงรูปร่างคล้ายมนุษย์ในสงครามมนุษย์-AI',
+      poster: 'linear-gradient(135deg, #5ee7df, #b490ca)'
+    },
+    {
+      id: 23, title: 'Avatar: The Last Airbender S2',
+      thaiTitle: 'เณรน้อยเจ้าอภินิหาร ซีซั่น 2',
+      emoji: '🌪️', type: 'series', country: 'western', genre: 'ผจญภัย-แฟนตาซี',
+      release: '2026-06-25',
+      duration: '8 ตอน', rating: 4.8,
+      cast: 'Gordon Cormier',
+      synopsis: 'อังฝึกฝนการบังคับธาตุดิน พร้อมเดินทางผ่านการเมืองและพันธมิตรในอาณาจักรดิน เพื่อเตรียมพร้อมเผชิญหน้าจ้าวอัคนี',
+      poster: 'linear-gradient(135deg, #f7971e, #ef473a)'
+    },
+    {
+      id: 24, title: 'กิ่งแก้ว',
+      thaiTitle: 'กิ่งแก้ว',
+      emoji: '👻', type: 'series', country: 'thai', genre: 'ผี-ดราม่า',
+      release: '2026-06-25',
+      duration: '12 ตอน', rating: 4.3,
+      cast: 'นักแสดงไทย',
+      synopsis: 'วิญญาณของหญิงสาวที่ถูกประหารชีวิตอย่างไม่เป็นธรรม กลับมาเพื่อทวงคืนความยุติธรรมให้กับความตายของตัวเอง',
+      poster: 'linear-gradient(135deg, #3a1c71, #d76d77)'
+    },
+  ];
+
+  // ===== State =====
+  let activeCategory = 'all';
+  let searchQuery = '';
+  let favorites = new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
+
+  // ===== Render =====
+  const chipsEl = document.getElementById('chips');
+  const moviesEl = document.getElementById('movies');
+  const resultCountEl = document.getElementById('resultCount');
+  const gridTitleEl = document.getElementById('gridTitle');
+
+  function renderChips() {
+    chipsEl.innerHTML = CATEGORIES.map(c => `
+      <button class="chip ${c.key === activeCategory ? 'active' : ''}" data-key="${c.key}">
+        <span>${c.emoji}</span> ${c.label}
+      </button>
+    `).join('');
+    chipsEl.querySelectorAll('.chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeCategory = btn.dataset.key;
+        renderChips();
+        renderMovies();
+      });
+    });
+  }
+
+  function daysUntil(dateStr) {
+    const today = new Date('2026-05-27');
+    const target = new Date(dateStr);
+    const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+    if (diff < 0) return 'เข้าฉายแล้ว';
+    if (diff === 0) return 'วันนี้!';
+    if (diff === 1) return 'พรุ่งนี้';
+    if (diff <= 7) return `อีก ${diff} วัน`;
+    return null;
+  }
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
+  }
+
+  const TYPE_LABEL = {
+    series: { label: 'ซีรีส์', emoji: '📺' },
+    movie:  { label: 'หนัง',    emoji: '🎥' },
+    anime:  { label: 'อนิเมะ',  emoji: '🍙' },
+    documentary: { label: 'สารคดี', emoji: '🎞️' },
+    reality: { label: 'วาไรตี้', emoji: '🎤' },
+  };
+  const COUNTRY_LABEL = {
+    thai:     { label: 'ไทย',     emoji: '🇹🇭' },
+    korean:   { label: 'เกาหลี', emoji: '🇰🇷' },
+    japanese: { label: 'ญี่ปุ่น', emoji: '🇯🇵' },
+    western:  { label: 'ฝรั่ง',   emoji: '🌎' },
+  };
+  function typeOf(m)    { return TYPE_LABEL[m.type] || { label: m.type, emoji: '🎬' }; }
+  function countryOf(m) { return COUNTRY_LABEL[m.country] || { label: m.country, emoji: '🌐' }; }
+
+  function renderMovies() {
+    const q = searchQuery.trim().toLowerCase();
+    const activeCat = CATEGORIES.find(c => c.key === activeCategory);
+    let list = MOVIES
+      .filter(m => activeCat.match(m))
+      .filter(m => !q ||
+        m.title.toLowerCase().includes(q) ||
+        m.thaiTitle.toLowerCase().includes(q) ||
+        (m.cast || '').toLowerCase().includes(q) ||
+        (m.genre || '').toLowerCase().includes(q))
+      .sort((a, b) => new Date(a.release) - new Date(b.release));
+
+    resultCountEl.textContent = `พบ ${list.length} เรื่อง`;
+    gridTitleEl.textContent = activeCategory === 'all'
+      ? '✨ ใหม่บน Netflix'
+      : `${activeCat.emoji} ${activeCat.label}`;
+
+    if (list.length === 0) {
+      moviesEl.innerHTML = `
+        <div class="empty">
+          <div class="em">🎞️</div>
+          <div>ไม่พบหนังที่ตรงกับเงื่อนไข</div>
+          <div style="font-size:12px;margin-top:6px">ลองเปลี่ยนหมวดหมู่หรือคำค้นหาดูนะ</div>
+        </div>`;
+      return;
+    }
+
+    moviesEl.innerHTML = list.map(m => {
+      const countdown = daysUntil(m.release);
+      const isFav = favorites.has(m.id);
+      const t = typeOf(m), c = countryOf(m);
+      return `
+        <article class="card" data-id="${m.id}">
+          <div class="poster" style="background:${m.poster}">
+            <span style="color:white;text-shadow:0 4px 12px rgba(0,0,0,.3)">${m.emoji}</span>
+            ${countdown ? `<span class="release-tag">${countdown}</span>` : ''}
+            <button class="fav ${isFav ? 'on' : ''}" data-fav="${m.id}" title="บันทึก">
+              ${isFav ? '❤️' : '🤍'}
+            </button>
+          </div>
+          <div class="card-body">
+            <h3>${m.thaiTitle}</h3>
+            <div class="meta">
+              <span>${m.title}</span>
+            </div>
+            <div class="genre-row">
+              <span class="genre-tag">${t.emoji} ${t.label}</span>
+              <span class="genre-tag">${c.emoji} ${c.label}</span>
+              <span class="genre-tag">🎭 ${m.genre}</span>
+            </div>
+            <div class="rating">
+              <span class="stars">★ ${m.rating.toFixed(1)}</span>
+              <span class="countdown">${formatDate(m.release)}</span>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    moviesEl.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('[data-fav]')) return;
+        const id = +card.dataset.id;
+        openModal(MOVIES.find(m => m.id === id));
+      });
+    });
+    moviesEl.querySelectorAll('[data-fav]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = +btn.dataset.fav;
+        if (favorites.has(id)) favorites.delete(id);
+        else favorites.add(id);
+        localStorage.setItem('favs', JSON.stringify([...favorites]));
+        renderMovies();
+      });
+    });
+  }
+
+  // ===== Modal =====
+  function openModal(m) {
+    const t = typeOf(m), c = countryOf(m);
+    document.getElementById('modalTitle').textContent = `${m.thaiTitle} — ${m.title}`;
+    document.getElementById('modalEmoji').textContent = m.emoji;
+    document.getElementById('modalHeader').style.background = m.poster;
+    document.getElementById('modalSynopsis').textContent = m.synopsis;
+    document.getElementById('modalMeta').innerHTML = `
+      <span>${t.emoji} ${t.label}</span>
+      <span>·</span>
+      <span>${c.emoji} ${c.label}</span>
+      <span>·</span>
+      <span>🎭 ${m.genre}</span>
+      <span>·</span>
+      <span>★ ${m.rating.toFixed(1)}</span>
+    `;
+    document.getElementById('modalInfo').innerHTML = `
+      <div class="info-item">
+        <div class="label">วันเข้าใหม่บน Netflix</div>
+        <div class="value">${formatDate(m.release)}</div>
+      </div>
+      <div class="info-item">
+        <div class="label">ประเภท</div>
+        <div class="value">${t.label}</div>
+      </div>
+      <div class="info-item">
+        <div class="label">นักแสดง / พากย์</div>
+        <div class="value">${m.cast}</div>
+      </div>
+      <div class="info-item">
+        <div class="label">ความยาว</div>
+        <div class="value">${m.duration}</div>
+      </div>
+    `;
+    document.getElementById('modalBg').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('modalBg').classList.remove('open');
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // ===== Search =====
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderMovies();
+  });
+
+  // ===== Init =====
+  renderChips();
+  renderMovies();
+</script>
+</body>
+</html>

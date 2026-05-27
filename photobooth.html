@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>◆ CHROMEPIX — Photobooth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0a0918;
+    --bg-mid: #14122b;
+    --bg-soft: #1d1a3d;
+    --chrome-hi: #ffffff;
+    --chrome-1: #eef0f4;
+    --chrome-2: #c2c6d0;
+    --chrome-3: #7d8190;
+    --chrome-shadow: #2a2c3a;
+    --neon-pink: #ff3d8b;
+    --neon-purple: #b794ff;
+    --neon-cyan: #4de5ff;
+    --neon-lime: #c5ff5b;
+    --ink: #ecebff;
+    --ink-soft: #a8a5c8;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-strong: rgba(255, 255, 255, 0.09);
+    --glass-border: rgba(255, 255, 255, 0.14);
+    --shadow-glow: 0 0 40px rgba(183, 148, 255, 0.25);
+    --shadow-pop: 0 14px 44px rgba(255, 61, 139, 0.4);
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --holo: linear-gradient(135deg, #ff3d8b 0%, #b794ff 35%, #4de5ff 70%, #c5ff5b 100%);
+    --chrome: linear-gradient(180deg, #ffffff 0%, #d4d6dc 35%, #8a8d96 55%, #d4d6dc 75%, #ffffff 100%);
+    --radius: 22px;
+    --radius-lg: 32px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    letter-spacing: 0.2px;
+    background:
+      radial-gradient(900px 500px at 12% 8%, rgba(255, 61, 139, 0.22) 0%, transparent 55%),
+      radial-gradient(800px 500px at 88% 12%, rgba(77, 229, 255, 0.18) 0%, transparent 55%),
+      radial-gradient(700px 500px at 50% 105%, rgba(183, 148, 255, 0.22) 0%, transparent 55%),
+      linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 60%, var(--bg-deep) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* subtle grid overlay for tech feel */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(183, 148, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(183, 148, 255, 0.04) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none;
+    z-index: 0;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+
+  /* Floating decorative shapes */
+  .deco {
+    position: fixed;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+    opacity: 0.85;
+    animation: float 6s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(183, 148, 255, 0.55));
+  }
+  .deco.d1 { top: 8%; left: 4%; font-size: 38px; animation-delay: 0s; }
+  .deco.d2 { top: 18%; right: 6%; font-size: 34px; animation-delay: 1s; }
+  .deco.d3 { bottom: 12%; left: 8%; font-size: 40px; animation-delay: 2s; }
+  .deco.d4 { bottom: 20%; right: 10%; font-size: 36px; animation-delay: 1.5s; }
+  .deco.d5 { top: 50%; left: 2%; font-size: 28px; animation-delay: 2.5s; }
+  .deco.d6 { top: 40%; right: 2%; font-size: 32px; animation-delay: 0.5s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-18px) rotate(8deg); }
+  }
+
+  header {
+    text-align: center;
+    padding: 36px 20px 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 22px;
+    background: var(--glass-strong);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 999px;
+    box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.18);
+    border: 1px solid var(--glass-border);
+    position: relative;
+  }
+  .logo::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 999px;
+    padding: 2px;
+    background: var(--holo);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .logo-emoji {
+    font-size: 26px;
+    filter: drop-shadow(0 0 6px rgba(77, 229, 255, 0.6));
+  }
+  .logo-text {
+    font-family: 'Unbounded', 'Orbitron', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    background: var(--chrome);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    filter: drop-shadow(0 1px 0 rgba(0,0,0,0.6));
+  }
+
+  h1 {
+    font-family: 'Unbounded', 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px, 5.2vw, 46px);
+    margin-top: 22px;
+    background: var(--chrome);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    filter: drop-shadow(0 2px 0 rgba(0,0,0,0.55)) drop-shadow(0 0 22px rgba(183, 148, 255, 0.35));
+  }
+  h1 .heart {
+    background: var(--holo);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: beat 1.2s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(255, 61, 139, 0.7));
+  }
+  @keyframes beat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.18); }
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    color: var(--ink-soft);
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .subtitle::before, .subtitle::after { content: '·'; margin: 0 10px; color: var(--neon-cyan); }
+
+  main {
+    max-width: 1100px;
+    margin: 20px auto 60px;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 26px;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 880px) {
+    main { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--glass);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.08);
+    border: 1px solid var(--glass-border);
+    position: relative;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.05) 30%, rgba(183,148,255,0.3) 70%, rgba(255,255,255,0.3));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 0 14px rgba(183, 148, 255, 0.4);
+  }
+
+  /* Camera area */
+  .stage {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a1832, #0e0d20);
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.6);
+  }
+
+  #video, #canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scaleX(-1); /* mirror */
+  }
+
+  #canvas { display: none; }
+
+  .stage.flash::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: white;
+    animation: flash 0.5s ease-out;
+    pointer-events: none;
+  }
+  @keyframes flash {
+    0% { opacity: 0.95; }
+    100% { opacity: 0; }
+  }
+
+  .placeholder {
+    text-align: center;
+    color: var(--ink-soft);
+    padding: 30px;
+  }
+  .placeholder .big { font-size: 64px; margin-bottom: 10px; }
+  .placeholder p { font-size: 15px; line-height: 1.6; }
+
+  /* Overlay filter & stickers */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .frame-border {
+    position: absolute;
+    inset: 0;
+    border: 14px solid transparent;
+    border-radius: var(--radius);
+    pointer-events: none;
+    z-index: 3;
+    transition: border-color 0.2s;
+  }
+
+  .countdown {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Unbounded', 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 170px;
+    background: linear-gradient(180deg, #ffffff 0%, #c2c6d0 55%, #ffffff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.4);
+    filter: drop-shadow(0 0 28px rgba(77, 229, 255, 0.55)) drop-shadow(0 8px 0 rgba(0,0,0,0.4));
+    z-index: 4;
+    pointer-events: none;
+  }
+  .countdown.active { display: flex; animation: pop 1s ease-in-out; }
+  @keyframes pop {
+    0% { transform: scale(0.3); opacity: 0; }
+    40% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(0.8); opacity: 0.2; }
+  }
+
+  /* Controls */
+  .controls {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button {
+    font-family: 'Unbounded', 'Orbitron', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    padding: 14px 24px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    position: relative;
+  }
+  button:active { transform: scale(0.96); }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-primary {
+    background: var(--holo);
+    background-size: 220% 220%;
+    color: #14122b;
+    font-weight: 700;
+    box-shadow: var(--shadow-pop), inset 0 1px 0 rgba(255,255,255,0.5);
+    animation: holoShift 7s ease infinite;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+  }
+  @keyframes holoShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 22px 52px rgba(255, 61, 139, 0.5), inset 0 1px 0 rgba(255,255,255,0.55);
+    filter: brightness(1.08);
+  }
+
+  .btn-ghost {
+    background: var(--glass-strong);
+    color: var(--ink);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(255,255,255,0.28);
+  }
+
+  .btn-mint {
+    background: var(--chrome);
+    color: #14122b;
+    font-weight: 700;
+    box-shadow: 0 12px 32px rgba(200, 200, 220, 0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+  .btn-mint:hover:not(:disabled) {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+  }
+
+  /* Sidebar options */
+  .opt-group { margin-bottom: 22px; }
+  .opt-label {
+    font-family: 'Unbounded', 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+  .opt-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .chip:hover {
+    background: rgba(255,255,255,0.12);
+    color: var(--ink);
+  }
+  .chip.active {
+    background: var(--holo);
+    background-size: 220% 220%;
+    color: #14122b;
+    font-weight: 700;
+    border-color: transparent;
+    box-shadow: 0 8px 22px rgba(183, 148, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.4);
+    animation: holoShift 7s ease infinite;
+  }
+
+  .swatch {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.18);
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  }
+  .swatch:hover { transform: scale(1.12); }
+  .swatch.active {
+    border-color: var(--chrome-1);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 10px 26px rgba(183, 148, 255, 0.55);
+    transform: scale(1.08);
+  }
+
+  /* Photo strip */
+  .strip-wrap {
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .strip {
+    display: inline-block;
+    padding: 18px 18px 96px;
+    background: linear-gradient(180deg, #ffffff 0%, #e8eaed 100%);
+    border-radius: 6px;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.7);
+    position: relative;
+    transform: rotate(-2deg);
+    transition: transform 0.3s;
+  }
+  .strip:hover { transform: rotate(0deg) scale(1.02); }
+
+  .strip-photos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .strip-photo {
+    width: 230px;
+    height: 172px;
+    background: #14122b;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+  }
+  .strip-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .strip-footer {
+    position: absolute;
+    bottom: 18px;
+    left: 14px;
+    right: 14px;
+    text-align: center;
+    font-family: 'Unbounded', 'Orbitron', sans-serif;
+    font-weight: 700;
+    color: #14122b;
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+  }
+  .strip-footer .date {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 400;
+    color: #6a6e7c;
+    font-size: 10px;
+    margin-top: 6px;
+    letter-spacing: 2px;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(140px);
+    background: var(--glass-strong);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: var(--ink);
+    padding: 14px 26px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 12px 44px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.15);
+    transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
+    z-index: 99;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  footer {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--ink-soft);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+  }
+  footer .heart {
+    background: var(--holo);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Caption input field — metallic */
+  .caption-field {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--glass-border);
+    font-family: 'Unbounded', 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 2px;
+    outline: none;
+    background: var(--glass-strong);
+    color: var(--ink);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-transform: uppercase;
+  }
+  .caption-field:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 0 3px rgba(77, 229, 255, 0.18);
+  }
+  .caption-field::placeholder { color: var(--chrome-3); text-transform: none; letter-spacing: 1px; }
+
+  /* Placeholder polish */
+  .placeholder { color: var(--ink-soft); }
+  .placeholder .big {
+    background: var(--chrome);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 18px rgba(77, 229, 255, 0.45));
+  }
+  .placeholder p { font-size: 14px; letter-spacing: 0.3px; }
+  .placeholder b {
+    font-family: 'Unbounded', sans-serif;
+    background: var(--holo);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+  }
+
+  /* Gradient frame chip */
+  .swatch.gradient::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+  <span class="deco d1">◆</span>
+  <span class="deco d2">✦</span>
+  <span class="deco d3">◇</span>
+  <span class="deco d4">✧</span>
+  <span class="deco d5">⬢</span>
+  <span class="deco d6">✶</span>
+
+  <header>
+    <div class="logo">
+      <span class="logo-emoji">◆</span>
+      <span class="logo-text">CHROMEPIX</span>
+    </div>
+    <h1>Strike a pose <span class="heart">◆</span></h1>
+    <p class="subtitle">4 shots · chrome filters · ready to drop</p>
+  </header>
+
+  <main>
+    <!-- Camera Card -->
+    <section class="card">
+      <div class="card-title">◢ Live Camera</div>
+      <div class="stage" id="stage">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="canvas"></canvas>
+        <div class="overlay" id="overlay"></div>
+        <div class="frame-border" id="frameBorder"></div>
+        <div class="countdown" id="countdown">3</div>
+        <div class="placeholder" id="placeholder">
+          <div class="big">◇</div>
+          <p>กด <b>Start Camera</b> เพื่อเริ่มเซสชัน<br>กล้องอยู่บนเครื่องคุณ · ไม่มีการอัปโหลดใดๆ</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn-ghost" id="startBtn">◉ Start Camera</button>
+        <button class="btn-primary" id="captureBtn" disabled>◆ Capture · 4 shots</button>
+        <button class="btn-ghost" id="resetBtn" disabled>⨯ Clear</button>
+      </div>
+    </section>
+
+    <!-- Options Card -->
+    <section class="card">
+      <div class="card-title">◣ Customize</div>
+
+      <div class="opt-group">
+        <div class="opt-label">Filter</div>
+        <div class="opt-row" id="filterRow">
+          <div class="chip active" data-filter="none">None</div>
+          <div class="chip" data-filter="chrome">◆ Chrome</div>
+          <div class="chip" data-filter="noir">◼ Noir</div>
+          <div class="chip" data-filter="cyber">⚡ Cyber</div>
+          <div class="chip" data-filter="warm">☀ Warm</div>
+          <div class="chip" data-filter="cool">❄ Cool</div>
+          <div class="chip" data-filter="vintage">▣ Vintage</div>
+          <div class="chip" data-filter="bw">B&amp;W</div>
+        </div>
+      </div>
+
+      <div class="opt-group">
+        <div class="opt-label">Frame</div>
+        <div class="opt-row" id="frameRow">
+          <div class="swatch active" data-frame="chrome" title="Chrome" style="background:linear-gradient(135deg,#fff 0%,#c2c6d0 50%,#7d8190 100%)"></div>
+          <div class="swatch" data-frame="holo" title="Holographic" style="background:linear-gradient(135deg,#ff3d8b 0%,#b794ff 35%,#4de5ff 70%,#c5ff5b 100%)"></div>
+          <div class="swatch" data-frame="rosegold" title="Rose Gold" style="background:linear-gradient(135deg,#f6c7c2 0%,#e8a598 45%,#b87968 100%)"></div>
+          <div class="swatch" data-frame="gold" title="Gold" style="background:linear-gradient(135deg,#fff3a8 0%,#e6c14a 50%,#9d7416 100%)"></div>
+          <div class="swatch" data-frame="gunmetal" title="Gunmetal" style="background:linear-gradient(135deg,#4a4a55 0%,#2b2c35 50%,#16161d 100%)"></div>
+          <div class="swatch" data-frame="midnight" title="Midnight" style="background:linear-gradient(135deg,#1d1a3d,#0a0918)"></div>
+          <div class="swatch" data-frame="neonpink" title="Neon Pink" style="background:#ff3d8b;box-shadow:0 0 18px rgba(255,61,139,0.7),0 4px 14px rgba(0,0,0,0.35)"></div>
+          <div class="swatch" data-frame="neoncyan" title="Neon Cyan" style="background:#4de5ff;box-shadow:0 0 18px rgba(77,229,255,0.7),0 4px 14px rgba(0,0,0,0.35)"></div>
+          <div class="swatch" data-frame="neonpurple" title="Neon Purple" style="background:#b794ff;box-shadow:0 0 18px rgba(183,148,255,0.7),0 4px 14px rgba(0,0,0,0.35)"></div>
+          <div class="swatch" data-frame="lime" title="Lime" style="background:#c5ff5b;box-shadow:0 0 18px rgba(197,255,91,0.5),0 4px 14px rgba(0,0,0,0.35)"></div>
+          <div class="swatch" data-frame="white" title="White" style="background:#fff"></div>
+          <div class="swatch" data-frame="black" title="Jet Black" style="background:#000"></div>
+        </div>
+      </div>
+
+      <div class="opt-group">
+        <div class="opt-label">Stickers</div>
+        <div class="opt-row" id="stickerRow">
+          <div class="chip active" data-sticker="none">None</div>
+          <div class="chip" data-sticker="diamonds">◆ Diamonds</div>
+          <div class="chip" data-sticker="stars">✦ Stars</div>
+          <div class="chip" data-sticker="hearts">♥ Hearts</div>
+          <div class="chip" data-sticker="sparkle">✧ Sparkle</div>
+          <div class="chip" data-sticker="cyber">⚡ Cyber</div>
+        </div>
+      </div>
+
+      <div class="opt-group">
+        <div class="opt-label">Caption</div>
+        <input id="captionInput" type="text" maxlength="24" value="CHROMEPIX ◆"
+          class="caption-field"
+          placeholder="ชื่อ / วันที่ / โลโก้ตัวเอง" />
+      </div>
+
+      <div class="opt-group">
+        <div class="opt-label">Countdown</div>
+        <div class="opt-row" id="delayRow">
+          <div class="chip" data-delay="0">⚡ Instant</div>
+          <div class="chip active" data-delay="3">3s</div>
+          <div class="chip" data-delay="5">5s</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Strip preview -->
+  <div class="strip-wrap" id="stripWrap" style="display:none;">
+    <div class="strip" id="strip">
+      <div class="strip-photos" id="stripPhotos"></div>
+      <div class="strip-footer">
+        <div id="stripCaption">CHROMEPIX ◆</div>
+        <div class="date" id="stripDate"></div>
+      </div>
+    </div>
+    <div style="margin-top:22px">
+      <button class="btn-mint" id="downloadBtn">⬇ Download</button>
+      <button class="btn-ghost" id="retakeBtn">↻ Retake</button>
+    </div>
+  </div>
+
+  <footer>
+    CHROMEPIX <span class="heart">◆</span> serve via https:// or localhost for camera access
+  </footer>
+
+  <div class="toast" id="toast">Saved</div>
+
+<script>
+(function(){
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const stage = document.getElementById('stage');
+  const placeholder = document.getElementById('placeholder');
+  const overlay = document.getElementById('overlay');
+  const frameBorder = document.getElementById('frameBorder');
+  const countdownEl = document.getElementById('countdown');
+
+  const startBtn = document.getElementById('startBtn');
+  const captureBtn = document.getElementById('captureBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const retakeBtn = document.getElementById('retakeBtn');
+
+  const captionInput = document.getElementById('captionInput');
+  const stripWrap = document.getElementById('stripWrap');
+  const stripPhotos = document.getElementById('stripPhotos');
+  const stripCaption = document.getElementById('stripCaption');
+  const stripDate = document.getElementById('stripDate');
+
+  const toast = document.getElementById('toast');
+
+  let stream = null;
+  let currentFilter = 'none';
+  let currentFrame = 'chrome';
+  let currentSticker = 'none';
+  let currentDelay = 3;
+  let photos = []; // dataURL
+  const SHOTS = 4;
+
+  // CSS filter strings (used for live video preview)
+  const cssFilterMap = {
+    none: 'none',
+    chrome: 'grayscale(0.85) contrast(1.18) brightness(1.04) saturate(0.7) hue-rotate(190deg)',
+    noir: 'grayscale(1) contrast(1.4) brightness(0.95)',
+    cyber: 'saturate(1.6) contrast(1.18) hue-rotate(285deg) brightness(1.05)',
+    warm: 'saturate(1.2) brightness(1.05) sepia(0.18) hue-rotate(-8deg)',
+    cool: 'saturate(1.15) brightness(1.05) hue-rotate(180deg) contrast(0.95)',
+    vintage: 'sepia(0.55) saturate(1.3) brightness(0.95) contrast(1.1)',
+    bw: 'grayscale(1) contrast(1.12) brightness(1.05)',
+  };
+
+  // Pixel-level filters (used on capture — bulletproof across browsers)
+  const pixelFilters = {
+    chrome: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        let g = d[i]*0.299 + d[i+1]*0.587 + d[i+2]*0.114;
+        g = Math.max(0, Math.min(255, (g - 128) * 1.2 + 128));
+        d[i]   = Math.min(255, g * 0.93);
+        d[i+1] = Math.min(255, g * 0.97);
+        d[i+2] = Math.min(255, g * 1.07 + 8);
+      }
+    },
+    noir: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        let g = d[i]*0.299 + d[i+1]*0.587 + d[i+2]*0.114;
+        g = Math.max(0, Math.min(255, (g - 128) * 1.45 + 128));
+        d[i] = d[i+1] = d[i+2] = g;
+      }
+    },
+    cyber: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        const r = d[i], g = d[i+1], b = d[i+2];
+        let nr = Math.min(255, r * 1.18 + 14);
+        let ng = Math.max(0, g * 0.82);
+        let nb = Math.min(255, b * 1.25 + 18);
+        d[i]   = Math.max(0, Math.min(255, (nr - 128) * 1.12 + 128));
+        d[i+1] = Math.max(0, Math.min(255, (ng - 128) * 1.12 + 128));
+        d[i+2] = Math.max(0, Math.min(255, (nb - 128) * 1.12 + 128));
+      }
+    },
+    warm: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        d[i]   = Math.min(255, d[i] * 1.13 + 12);
+        d[i+1] = Math.min(255, d[i+1] * 1.05 + 4);
+        d[i+2] = Math.max(0, d[i+2] * 0.88);
+      }
+    },
+    cool: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        d[i]   = Math.max(0, d[i] * 0.9);
+        d[i+2] = Math.min(255, d[i+2] * 1.2 + 10);
+      }
+    },
+    vintage: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        const r = d[i], g = d[i+1], b = d[i+2];
+        d[i]   = Math.min(255, r * 0.55 + g * 0.55 + b * 0.15);
+        d[i+1] = Math.min(255, r * 0.42 + g * 0.55 + b * 0.18);
+        d[i+2] = Math.min(255, r * 0.28 + g * 0.40 + b * 0.18);
+      }
+    },
+    bw: (d) => {
+      for (let i = 0; i < d.length; i += 4) {
+        const g = d[i]*0.299 + d[i+1]*0.587 + d[i+2]*0.114;
+        d[i] = d[i+1] = d[i+2] = g;
+      }
+    },
+  };
+
+  // Frame styles — gradients + solids + neon glows
+  const frameStyles = {
+    chrome:    { type: 'gradient', css: 'linear-gradient(135deg,#ffffff 0%,#c2c6d0 50%,#7d8190 100%)',
+                 stops: [[0,'#ffffff'],[0.5,'#c2c6d0'],[1,'#7d8190']], dark: false },
+    holo:      { type: 'gradient', css: 'linear-gradient(135deg,#ff3d8b 0%,#b794ff 35%,#4de5ff 70%,#c5ff5b 100%)',
+                 stops: [[0,'#ff3d8b'],[0.35,'#b794ff'],[0.7,'#4de5ff'],[1,'#c5ff5b']], dark: false },
+    rosegold:  { type: 'gradient', css: 'linear-gradient(135deg,#f6c7c2 0%,#e8a598 45%,#b87968 100%)',
+                 stops: [[0,'#f6c7c2'],[0.45,'#e8a598'],[1,'#b87968']], dark: false },
+    gold:      { type: 'gradient', css: 'linear-gradient(135deg,#fff3a8 0%,#e6c14a 50%,#9d7416 100%)',
+                 stops: [[0,'#fff3a8'],[0.5,'#e6c14a'],[1,'#9d7416']], dark: false },
+    gunmetal:  { type: 'gradient', css: 'linear-gradient(135deg,#4a4a55 0%,#2b2c35 50%,#16161d 100%)',
+                 stops: [[0,'#4a4a55'],[0.5,'#2b2c35'],[1,'#16161d']], dark: true },
+    midnight:  { type: 'gradient', css: 'linear-gradient(135deg,#1d1a3d 0%,#0a0918 100%)',
+                 stops: [[0,'#1d1a3d'],[1,'#0a0918']], dark: true },
+    neonpink:  { type: 'solid', color: '#ff3d8b', glow: 'rgba(255,61,139,0.55)', dark: false },
+    neoncyan:  { type: 'solid', color: '#4de5ff', glow: 'rgba(77,229,255,0.55)', dark: false },
+    neonpurple:{ type: 'solid', color: '#b794ff', glow: 'rgba(183,148,255,0.55)', dark: false },
+    lime:      { type: 'solid', color: '#c5ff5b', glow: 'rgba(197,255,91,0.5)', dark: false },
+    white:     { type: 'solid', color: '#ffffff', dark: false },
+    black:     { type: 'solid', color: '#000000', dark: true },
+  };
+
+  function applyFilter() {
+    video.style.filter = cssFilterMap[currentFilter] || 'none';
+  }
+
+  function applyFrame() {
+    const f = frameStyles[currentFrame];
+    if (!f) return;
+    frameBorder.style.borderImage = '';
+    frameBorder.style.boxShadow = 'none';
+    if (f.type === 'solid') {
+      frameBorder.style.border = '14px solid ' + f.color;
+      if (f.glow) {
+        frameBorder.style.boxShadow = `inset 0 0 22px ${f.glow}, 0 0 36px ${f.glow}`;
+      }
+    } else {
+      frameBorder.style.border = '14px solid transparent';
+      frameBorder.style.borderImage = f.css + ' 1';
+    }
+  }
+
+  // Sticker positions per scheme
+  const stickerSchemes = {
+    none: [],
+    diamonds: ['◆','◇','◈','◆','♦','◇'],
+    stars: ['✦','✧','★','✩','✶','✷'],
+    hearts: ['♥','♡','❤︎','♥','❣','♡'],
+    sparkle: ['✧','✦','✨','⋆','✺','✩'],
+    cyber: ['⚡','◢','◣','▲','◆','✦'],
+  };
+
+  function renderStickers() {
+    overlay.innerHTML = '';
+    const set = stickerSchemes[currentSticker];
+    if (!set || set.length === 0) return;
+    const positions = [
+      { top: '6%', left: '5%', size: 36, rot: -15 },
+      { top: '8%', right: '6%', size: 32, rot: 18 },
+      { bottom: '10%', left: '8%', size: 34, rot: 12 },
+      { bottom: '12%', right: '10%', size: 38, rot: -10 },
+      { top: '45%', left: '3%', size: 26, rot: 20 },
+      { top: '50%', right: '3%', size: 28, rot: -22 },
+    ];
+    positions.forEach((p, i) => {
+      const span = document.createElement('span');
+      span.textContent = set[i % set.length];
+      span.style.cssText = `position:absolute;font-size:${p.size}px;transform:rotate(${p.rot}deg);
+        ${p.top ? 'top:'+p.top : ''}; ${p.bottom ? 'bottom:'+p.bottom : ''};
+        ${p.left ? 'left:'+p.left : ''}; ${p.right ? 'right:'+p.right : ''};
+        text-shadow: 0 2px 6px rgba(0,0,0,0.15);`;
+      overlay.appendChild(span);
+    });
+  }
+
+  // Chip selection helpers
+  function bindChipGroup(rowId, onChange) {
+    const row = document.getElementById(rowId);
+    row.addEventListener('click', e => {
+      const chip = e.target.closest('.chip, .swatch');
+      if (!chip) return;
+      row.querySelectorAll('.chip, .swatch').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      onChange(chip);
+    });
+  }
+
+  bindChipGroup('filterRow', chip => {
+    currentFilter = chip.dataset.filter;
+    applyFilter();
+  });
+  bindChipGroup('frameRow', chip => {
+    currentFrame = chip.dataset.frame;
+    applyFrame();
+  });
+  bindChipGroup('stickerRow', chip => {
+    currentSticker = chip.dataset.sticker;
+    renderStickers();
+  });
+  bindChipGroup('delayRow', chip => {
+    currentDelay = parseInt(chip.dataset.delay, 10);
+  });
+
+  applyFrame();
+
+  // Start camera
+  startBtn.addEventListener('click', async () => {
+    if (stream) return;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 960 } },
+        audio: false
+      });
+      video.srcObject = stream;
+      placeholder.style.display = 'none';
+      startBtn.textContent = '● Live';
+      startBtn.disabled = true;
+      captureBtn.disabled = false;
+    } catch (err) {
+      showToast('Camera access denied');
+      console.error(err);
+    }
+  });
+
+  // Capture flow
+  let isCapturing = false;
+  captureBtn.addEventListener('click', async () => {
+    if (isCapturing) return;
+    isCapturing = true;
+    photos = [];
+    captureBtn.disabled = true;
+    resetBtn.disabled = true;
+    stripWrap.style.display = 'none';
+
+    for (let i = 0; i < SHOTS; i++) {
+      if (currentDelay > 0) {
+        await runCountdown(currentDelay);
+      } else {
+        await sleep(300);
+      }
+      const dataURL = capturePhoto();
+      photos.push(dataURL);
+      flashEffect();
+      await sleep(700);
+    }
+
+    renderStrip();
+    isCapturing = false;
+    captureBtn.disabled = false;
+    resetBtn.disabled = false;
+    showToast('Locked in ◆');
+  });
+
+  function runCountdown(seconds) {
+    return new Promise(resolve => {
+      let n = seconds;
+      countdownEl.textContent = n;
+      countdownEl.classList.add('active');
+      // re-trigger animation
+      countdownEl.style.animation = 'none';
+      void countdownEl.offsetWidth;
+      countdownEl.style.animation = '';
+
+      const interval = setInterval(() => {
+        n--;
+        if (n <= 0) {
+          clearInterval(interval);
+          countdownEl.classList.remove('active');
+          resolve();
+        } else {
+          countdownEl.textContent = n;
+          countdownEl.style.animation = 'none';
+          void countdownEl.offsetWidth;
+          countdownEl.style.animation = '';
+        }
+      }, 1000);
+    });
+  }
+
+  function capturePhoto() {
+    const w = video.videoWidth || 1280;
+    const h = video.videoHeight || 960;
+    canvas.width = w;
+    canvas.height = h;
+
+    // 1) Draw mirrored video frame (no filter — we'll do pixel-based for reliability)
+    ctx.save();
+    ctx.filter = 'none';
+    ctx.translate(w, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, w, h);
+    ctx.restore();
+
+    // 2) Apply filter at the pixel level so it's baked into the saved image
+    const fn = pixelFilters[currentFilter];
+    if (fn) {
+      try {
+        const data = ctx.getImageData(0, 0, w, h);
+        fn(data.data);
+        ctx.putImageData(data, 0, 0);
+      } catch (e) {
+        // canvas tainted — fall back to css filter pass via second canvas
+        console.warn('Pixel filter failed, falling back to ctx.filter', e);
+        const tmp = document.createElement('canvas');
+        tmp.width = w; tmp.height = h;
+        tmp.getContext('2d').drawImage(canvas, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        ctx.filter = cssFilterMap[currentFilter] || 'none';
+        ctx.drawImage(tmp, 0, 0);
+        ctx.filter = 'none';
+      }
+    }
+
+    // 3) Draw stickers onto image
+    drawStickersOnCanvas(w, h);
+
+    return canvas.toDataURL('image/jpeg', 0.92);
+  }
+
+  function drawStickersOnCanvas(w, h) {
+    const set = stickerSchemes[currentSticker];
+    if (!set || set.length === 0) return;
+    const positions = [
+      { x: 0.08, y: 0.12, size: 0.10, rot: -15 },
+      { x: 0.88, y: 0.14, size: 0.09, rot: 18 },
+      { x: 0.12, y: 0.86, size: 0.10, rot: 12 },
+      { x: 0.86, y: 0.84, size: 0.11, rot: -10 },
+      { x: 0.05, y: 0.50, size: 0.07, rot: 20 },
+      { x: 0.93, y: 0.52, size: 0.08, rot: -22 },
+    ];
+    positions.forEach((p, i) => {
+      const size = Math.min(w, h) * p.size * 1.2;
+      ctx.save();
+      ctx.translate(w * p.x, h * p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.font = `${size}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(0,0,0,0.18)';
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetY = 3;
+      ctx.fillText(set[i % set.length], 0, 0);
+      ctx.restore();
+    });
+  }
+
+  function flashEffect() {
+    stage.classList.remove('flash');
+    void stage.offsetWidth;
+    stage.classList.add('flash');
+  }
+
+  function renderStrip() {
+    stripPhotos.innerHTML = '';
+    photos.forEach(src => {
+      const wrap = document.createElement('div');
+      wrap.className = 'strip-photo';
+      const img = document.createElement('img');
+      img.src = src;
+      wrap.appendChild(img);
+      stripPhotos.appendChild(wrap);
+    });
+    stripCaption.textContent = captionInput.value || 'CHROMEPIX ◆';
+    const d = new Date();
+    stripDate.textContent = d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
+    stripWrap.style.display = 'block';
+    stripWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  captionInput.addEventListener('input', () => {
+    stripCaption.textContent = captionInput.value || 'CHROMEPIX ◆';
+  });
+
+  // Download as composite image
+  downloadBtn.addEventListener('click', async () => {
+    if (photos.length === 0) return;
+    const out = document.createElement('canvas');
+    const photoW = 640;
+    const photoH = 480;
+    const pad = 32;
+    const gap = 18;
+    const footer = 150;
+    out.width = photoW + pad * 2;
+    out.height = pad + (photoH + gap) * photos.length - gap + footer + pad;
+    const c = out.getContext('2d');
+
+    // Background (frame style)
+    const f = frameStyles[currentFrame] || frameStyles.chrome;
+    if (f.type === 'gradient') {
+      const grad = c.createLinearGradient(0, 0, out.width, out.height);
+      f.stops.forEach(([pos, col]) => grad.addColorStop(pos, col));
+      c.fillStyle = grad;
+      c.fillRect(0, 0, out.width, out.height);
+    } else {
+      c.fillStyle = f.color;
+      c.fillRect(0, 0, out.width, out.height);
+      if (f.glow) {
+        // soft inner glow effect
+        const g = c.createRadialGradient(out.width/2, out.height/2, 0, out.width/2, out.height/2, out.width*0.7);
+        g.addColorStop(0, 'rgba(255,255,255,0.08)');
+        g.addColorStop(1, 'rgba(0,0,0,0.18)');
+        c.fillStyle = g;
+        c.fillRect(0, 0, out.width, out.height);
+      }
+    }
+
+    // Draw photos
+    for (let i = 0; i < photos.length; i++) {
+      const img = await loadImage(photos[i]);
+      const x = pad;
+      const y = pad + i * (photoH + gap);
+      // photo background
+      c.fillStyle = '#14122b';
+      c.fillRect(x, y, photoW, photoH);
+      // cover fit
+      const ratio = Math.max(photoW / img.width, photoH / img.height);
+      const dw = img.width * ratio;
+      const dh = img.height * ratio;
+      const dx = x + (photoW - dw) / 2;
+      const dy = y + (photoH - dh) / 2;
+      c.save();
+      c.beginPath();
+      c.rect(x, y, photoW, photoH);
+      c.clip();
+      c.drawImage(img, dx, dy, dw, dh);
+      c.restore();
+    }
+
+    // Footer text
+    const footY = pad + photos.length * (photoH + gap) - gap + 50;
+    c.textAlign = 'center';
+    const dark = f.dark;
+    c.fillStyle = dark ? '#f4f5f7' : '#14122b';
+    c.font = '700 42px "Unbounded","Orbitron",sans-serif';
+    const caption = (captionInput.value || 'CHROMEPIX ◆').toUpperCase();
+    // letter-spacing simulation
+    drawSpacedText(c, caption, out.width / 2, footY, 3);
+
+    c.fillStyle = dark ? 'rgba(244,245,247,0.7)' : 'rgba(20,18,43,0.65)';
+    c.font = '400 20px "Space Grotesk","Inter",sans-serif';
+    const d = new Date();
+    const dateStr = d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
+    drawSpacedText(c, dateStr, out.width / 2, footY + 42, 3);
+
+    const link = document.createElement('a');
+    link.download = `chromepix-${Date.now()}.png`;
+    link.href = out.toDataURL('image/png');
+    link.click();
+    showToast('Downloaded');
+  });
+
+  function drawSpacedText(c, text, cx, y, spacing) {
+    // measure with spacing and center
+    let total = 0;
+    const widths = [];
+    for (const ch of text) {
+      const w = c.measureText(ch).width;
+      widths.push(w);
+      total += w + spacing;
+    }
+    total -= spacing;
+    let x = cx - total / 2;
+    let i = 0;
+    for (const ch of text) {
+      c.fillText(ch, x + widths[i] / 2, y);
+      x += widths[i] + spacing;
+      i++;
+    }
+  }
+
+  function loadImage(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  resetBtn.addEventListener('click', () => {
+    photos = [];
+    stripWrap.style.display = 'none';
+    resetBtn.disabled = true;
+  });
+  retakeBtn.addEventListener('click', () => {
+    photos = [];
+    stripWrap.style.display = 'none';
+    resetBtn.disabled = true;
+    captureBtn.click();
+  });
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+})();
+</script>
+</body>
+</html>
