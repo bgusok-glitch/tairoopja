@@ -436,6 +436,79 @@
     animation: holoShift 7s ease infinite;
   }
 
+  /* Layout chips (mini diagrams) */
+  .layout-chip {
+    padding: 10px 12px !important;
+    display: inline-flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 68px;
+  }
+  .layout-chip .lp {
+    width: 34px;
+    height: 38px;
+    display: grid;
+    gap: 2px;
+    background: rgba(0,0,0,0.28);
+    border-radius: 3px;
+    padding: 3px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+  }
+  .layout-chip.active .lp { box-shadow: inset 0 0 0 1px rgba(20,18,43,0.25); background: rgba(20,18,43,0.18); }
+  .layout-chip .lp.lp-strip4 { grid-template-rows: repeat(4, 1fr); }
+  .layout-chip .lp.lp-strip3 { grid-template-rows: repeat(3, 1fr); }
+  .layout-chip .lp.lp-strip2 { grid-template-rows: repeat(2, 1fr); }
+  .layout-chip .lp.lp-grid2x2 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
+  .layout-chip .lp.lp-single { grid-template-rows: 1fr; }
+  .layout-chip .lp i {
+    background: currentColor;
+    opacity: 0.45;
+    border-radius: 1px;
+    display: block;
+  }
+  .layout-chip.active .lp i { opacity: 0.7; }
+  .layout-chip .lname {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* Live-preview layout hint (small grid overlay on stage) */
+  .layout-hint {
+    position: absolute;
+    inset: 24px;
+    pointer-events: none;
+    z-index: 3;
+    display: none;
+    border-radius: 8px;
+    transition: opacity 0.3s;
+    opacity: 0;
+  }
+  .layout-hint.visible { display: block; opacity: 0.7; }
+  .layout-hint .cell {
+    position: absolute;
+    border: 1.5px dashed rgba(77, 229, 255, 0.65);
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(77, 229, 255, 0.35);
+  }
+  .layout-hint .cell.active {
+    border-style: solid;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 16px rgba(77, 229, 255, 0.8), inset 0 0 12px rgba(77, 229, 255, 0.25);
+    background: rgba(77, 229, 255, 0.08);
+  }
+  .layout-hint .cell .num {
+    position: absolute;
+    top: 4px; left: 6px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 8px rgba(77, 229, 255, 0.8);
+    letter-spacing: 1px;
+  }
+
   .swatch {
     width: 40px;
     height: 40px;
@@ -486,6 +559,210 @@
     position: relative;
     box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
   }
+
+  /* Grid 2×2 variant — neon-cyan glow cells like the reference */
+  .strip.layout-grid2x2 {
+    background: linear-gradient(135deg, #1a1a35 0%, #0a0918 100%);
+    padding: 22px 22px 96px;
+  }
+  .strip.layout-grid2x2 .strip-photos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+  }
+  .strip.layout-grid2x2 .strip-photo {
+    width: 215px;
+    height: 162px;
+    border: 2px solid rgba(77, 229, 255, 0.85);
+    border-radius: 4px;
+    box-shadow: 0 0 14px rgba(77, 229, 255, 0.45), inset 0 0 8px rgba(77, 229, 255, 0.18);
+  }
+  .strip.layout-grid2x2 .strip-footer { color: var(--ink); }
+  .strip.layout-grid2x2 .strip-footer .date { color: rgba(236,235,255,0.6); }
+
+  /* Single / strip3 / strip2 spacing */
+  .strip.layout-single .strip-photo { width: 320px; height: 240px; }
+  .strip.layout-strip3 .strip-photo,
+  .strip.layout-strip2 .strip-photo { width: 240px; height: 180px; }
+
+  /* Sticker overlay on the strip */
+  .strip-canvas {
+    position: relative;
+    display: inline-block;
+  }
+  .strip-stickers {
+    position: absolute;
+    inset: 0;
+    pointer-events: auto;
+    z-index: 5;
+    touch-action: none;
+  }
+  .placed-sticker {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
+    line-height: 1;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    will-change: transform;
+    touch-action: none;
+  }
+  .placed-sticker:active { cursor: grabbing; }
+  .placed-sticker.selected {
+    outline: 2px dashed var(--neon-cyan);
+    outline-offset: 4px;
+    border-radius: 4px;
+    filter: drop-shadow(0 0 8px rgba(77,229,255,0.65));
+  }
+
+  .sticker-toolbar {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 2px;
+    background: rgba(20, 18, 43, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    padding: 4px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    z-index: 6;
+    white-space: nowrap;
+  }
+  .sticker-toolbar button {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    letter-spacing: 0;
+    text-transform: none;
+    min-width: 28px;
+    transition: background 0.15s;
+  }
+  .sticker-toolbar button:hover { background: rgba(255,255,255,0.1); }
+  .sticker-toolbar button.danger:hover { background: rgba(255,61,139,0.25); color: #ff3d8b; }
+
+  /* Sticker editor panel */
+  .sticker-editor {
+    margin-top: 24px;
+    padding: 18px 20px;
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }
+  .sticker-editor-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .sticker-editor-hint {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+  .sticker-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .sticker-tab {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-border);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'Unbounded', sans-serif;
+  }
+  .sticker-tab.active {
+    background: var(--holo);
+    background-size: 200% 200%;
+    color: #14122b;
+    border-color: transparent;
+    animation: holoShift 7s ease infinite;
+  }
+  .sticker-palette {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+    gap: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 4px;
+    background: rgba(0,0,0,0.18);
+    border-radius: 12px;
+  }
+  .sticker-btn {
+    aspect-ratio: 1;
+    border: none;
+    background: transparent;
+    font-size: 26px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+    padding: 0;
+    font-family: inherit;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .sticker-btn:hover {
+    background: rgba(255,255,255,0.12);
+    transform: scale(1.15);
+  }
+  .sticker-btn:active { transform: scale(0.92); }
+
+  .sticker-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    justify-content: flex-end;
+  }
+  .sticker-actions .mini {
+    font-size: 10px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .sticker-actions .mini:hover { background: rgba(255,255,255,0.12); color: var(--ink); }
+  .sticker-actions .mini.danger:hover { background: rgba(255,61,139,0.18); color: #ff3d8b; border-color: rgba(255,61,139,0.35); }
   .strip-photo img {
     width: 100%;
     height: 100%;
@@ -632,6 +909,7 @@
         <canvas id="canvas"></canvas>
         <div class="overlay" id="overlay"></div>
         <div class="frame-border" id="frameBorder"></div>
+        <div class="layout-hint" id="layoutHint"></div>
         <div class="countdown" id="countdown">3</div>
         <div class="placeholder" id="placeholder">
           <div class="big">◇</div>
@@ -642,6 +920,7 @@
       <div class="controls">
         <button class="btn-ghost" id="startBtn">◉ Start Camera</button>
         <button class="btn-primary" id="captureBtn" disabled>◆ Capture · 4 shots</button>
+        <!-- ^ label updated dynamically based on selected layout -->
         <button class="btn-ghost" id="resetBtn" disabled>⨯ Clear</button>
       </div>
     </section>
@@ -649,6 +928,32 @@
     <!-- Options Card -->
     <section class="card">
       <div class="card-title">◣ Customize</div>
+
+      <div class="opt-group">
+        <div class="opt-label">Layout</div>
+        <div class="opt-row" id="layoutRow">
+          <div class="chip layout-chip active" data-layout="strip4" title="Strip × 4">
+            <div class="lp lp-strip4"><i></i><i></i><i></i><i></i></div>
+            <span class="lname">Strip 4</span>
+          </div>
+          <div class="chip layout-chip" data-layout="grid2x2" title="Grid 2 × 2">
+            <div class="lp lp-grid2x2"><i></i><i></i><i></i><i></i></div>
+            <span class="lname">Grid 2×2</span>
+          </div>
+          <div class="chip layout-chip" data-layout="strip3" title="Strip × 3">
+            <div class="lp lp-strip3"><i></i><i></i><i></i></div>
+            <span class="lname">Strip 3</span>
+          </div>
+          <div class="chip layout-chip" data-layout="strip2" title="Strip × 2">
+            <div class="lp lp-strip2"><i></i><i></i></div>
+            <span class="lname">Strip 2</span>
+          </div>
+          <div class="chip layout-chip" data-layout="single" title="Single">
+            <div class="lp lp-single"><i></i></div>
+            <span class="lname">Single</span>
+          </div>
+        </div>
+      </div>
 
       <div class="opt-group">
         <div class="opt-label">Filter</div>
@@ -715,12 +1020,30 @@
   <!-- Strip preview -->
   <div class="strip-wrap" id="stripWrap" style="display:none;">
     <div class="strip" id="strip">
-      <div class="strip-photos" id="stripPhotos"></div>
+      <div class="strip-canvas" id="stripCanvas">
+        <div class="strip-photos" id="stripPhotos"></div>
+        <div class="strip-stickers" id="stripStickers"></div>
+      </div>
       <div class="strip-footer">
         <div id="stripCaption">CHROMEPIX ◆</div>
         <div class="date" id="stripDate"></div>
       </div>
     </div>
+
+    <!-- Sticker editor — appears after capture -->
+    <div class="sticker-editor" id="stickerEditor">
+      <div class="sticker-editor-title">
+        <span>◣ Decorate</span>
+        <span id="placedCount" style="font-size:10px;color:var(--ink-soft);letter-spacing:1.5px">0 placed</span>
+      </div>
+      <p class="sticker-editor-hint">Tap a sticker to add · drag to move · tap to select</p>
+      <div class="sticker-tabs" id="stickerTabs"></div>
+      <div class="sticker-palette" id="stickerPalette"></div>
+      <div class="sticker-actions">
+        <button class="mini danger" id="clearStickersBtn">⨯ Clear all</button>
+      </div>
+    </div>
+
     <div style="margin-top:22px">
       <button class="btn-mint" id="downloadBtn">⬇ Download</button>
       <button class="btn-ghost" id="retakeBtn">↻ Retake</button>
@@ -755,16 +1078,224 @@
   const stripPhotos = document.getElementById('stripPhotos');
   const stripCaption = document.getElementById('stripCaption');
   const stripDate = document.getElementById('stripDate');
+  const stripEl = document.getElementById('strip');
+  const layoutHint = document.getElementById('layoutHint');
 
   const toast = document.getElementById('toast');
+
+  // Layout definitions (cols × rows, shot count, canvas dimensions for export)
+  const layouts = {
+    strip4:  { name: 'Strip × 4', shots: 4, cols: 1, rows: 4, cellW: 640, cellH: 480, gap: 18, pad: 32, footerH: 150 },
+    grid2x2: { name: 'Grid 2 × 2', shots: 4, cols: 2, rows: 2, cellW: 560, cellH: 420, gap: 16, pad: 28, footerH: 130, neon: true },
+    strip3:  { name: 'Strip × 3', shots: 3, cols: 1, rows: 3, cellW: 640, cellH: 480, gap: 18, pad: 32, footerH: 150 },
+    strip2:  { name: 'Strip × 2', shots: 2, cols: 1, rows: 2, cellW: 640, cellH: 480, gap: 18, pad: 32, footerH: 150 },
+    single:  { name: 'Single',    shots: 1, cols: 1, rows: 1, cellW: 1000, cellH: 750, gap: 0,  pad: 36, footerH: 140 },
+  };
 
   let stream = null;
   let currentFilter = 'none';
   let currentFrame = 'chrome';
   let currentSticker = 'none';
   let currentDelay = 3;
+  let currentLayoutId = 'strip4';
   let photos = []; // dataURL
-  const SHOTS = 4;
+
+  function currentLayout() { return layouts[currentLayoutId]; }
+  function currentShots() { return currentLayout().shots; }
+
+  // ── Post-capture sticker editor state ─────────────────
+  // Each placed sticker: { id, emoji, xPct, yPct, size (px in preview), rotation (deg) }
+  let placedStickers = [];
+  let selectedStickerId = null;
+  let nextStickerId = 0;
+  const DEFAULT_STICKER_SIZE = 56;
+
+  // Palette categorized — y2k / cool / cute mix
+  const stickerPalette = {
+    Love:    ['♥','♡','💖','💗','💝','💘','💕','💞','❣','💋','❤︎','💌'],
+    Sparkle: ['✦','✧','✶','✷','★','☆','✨','⭐','🌟','💫','🌠','⋆','✺','✩'],
+    Cute:    ['🐰','🐱','🐻','🐼','🦄','🐶','🐯','🐸','🐧','🐹','🐨','🦋'],
+    Sweet:   ['🍓','🍒','🍑','🍭','🍰','🧁','🍦','🍩','🍪','🌈','🍡','🍬'],
+    Bloom:   ['🌸','🌷','🌼','🌺','🌻','🌹','💐','🍀','🌿','🪷','🪴','🌱'],
+    Cool:    ['◆','◇','◈','♦','⬢','⬣','▲','▼','◢','◣','◤','◥','■','□','◯','●'],
+    Y2K:     ['⚡','🔥','💎','👑','🎀','🎈','🎉','🦋','🌈','💅','🌙','☁️','✌️','💯','🔮','👻'],
+    Text:    ['💭','💬','❣️','⁉️','‼️','⚠️','♻️','✅','❤️‍🔥','💅','📸','🪩'],
+  };
+
+  function initStickerPalette() {
+    const tabsEl = document.getElementById('stickerTabs');
+    const paletteEl = document.getElementById('stickerPalette');
+    const cats = Object.keys(stickerPalette);
+    let active = cats[0];
+
+    function renderTabs() {
+      tabsEl.innerHTML = '';
+      cats.forEach(cat => {
+        const t = document.createElement('button');
+        t.className = 'sticker-tab' + (cat === active ? ' active' : '');
+        t.textContent = cat;
+        t.addEventListener('click', () => { active = cat; renderTabs(); renderPalette(); });
+        tabsEl.appendChild(t);
+      });
+    }
+    function renderPalette() {
+      paletteEl.innerHTML = '';
+      stickerPalette[active].forEach(em => {
+        const b = document.createElement('button');
+        b.className = 'sticker-btn';
+        b.textContent = em;
+        b.title = 'Add ' + em;
+        b.addEventListener('click', () => addPlacedSticker(em));
+        paletteEl.appendChild(b);
+      });
+    }
+    renderTabs();
+    renderPalette();
+  }
+
+  function addPlacedSticker(emoji) {
+    const id = ++nextStickerId;
+    // place at center of strip-canvas; if multiple, jitter slightly
+    const jitter = (placedStickers.length % 6) * 4 - 10;
+    placedStickers.push({
+      id, emoji,
+      xPct: 50 + jitter,
+      yPct: 50 + jitter,
+      size: DEFAULT_STICKER_SIZE,
+      rotation: 0,
+    });
+    selectedStickerId = id;
+    renderPlacedStickers();
+  }
+
+  function removePlacedSticker(id) {
+    placedStickers = placedStickers.filter(s => s.id !== id);
+    if (selectedStickerId === id) selectedStickerId = null;
+    renderPlacedStickers();
+  }
+
+  function updatePlacedSticker(id, patch) {
+    const s = placedStickers.find(x => x.id === id);
+    if (!s) return;
+    Object.assign(s, patch);
+    renderPlacedStickers();
+  }
+
+  function renderPlacedStickers() {
+    const layer = document.getElementById('stripStickers');
+    if (!layer) return;
+    layer.innerHTML = '';
+    placedStickers.forEach(s => {
+      const el = document.createElement('div');
+      el.className = 'placed-sticker' + (s.id === selectedStickerId ? ' selected' : '');
+      el.dataset.id = s.id;
+      el.textContent = s.emoji;
+      el.style.left = s.xPct + '%';
+      el.style.top  = s.yPct + '%';
+      el.style.fontSize = s.size + 'px';
+      el.style.transform = `translate(-50%, -50%) rotate(${s.rotation}deg)`;
+      // attach toolbar to the selected one
+      if (s.id === selectedStickerId) {
+        const tb = document.createElement('div');
+        tb.className = 'sticker-toolbar';
+        tb.innerHTML = `
+          <button data-act="smaller" title="Smaller">−</button>
+          <button data-act="bigger" title="Bigger">+</button>
+          <button data-act="rotl" title="Rotate left">↺</button>
+          <button data-act="rotr" title="Rotate right">↻</button>
+          <button data-act="del" class="danger" title="Delete">⨯</button>
+        `;
+        tb.addEventListener('pointerdown', e => e.stopPropagation());
+        tb.addEventListener('click', e => {
+          const act = e.target.dataset.act;
+          if (!act) return;
+          if (act === 'smaller') updatePlacedSticker(s.id, { size: Math.max(24, s.size - 8) });
+          else if (act === 'bigger') updatePlacedSticker(s.id, { size: Math.min(180, s.size + 8) });
+          else if (act === 'rotl') updatePlacedSticker(s.id, { rotation: s.rotation - 15 });
+          else if (act === 'rotr') updatePlacedSticker(s.id, { rotation: s.rotation + 15 });
+          else if (act === 'del') removePlacedSticker(s.id);
+        });
+        el.appendChild(tb);
+      }
+      layer.appendChild(el);
+    });
+    document.getElementById('placedCount').textContent = placedStickers.length + ' placed';
+  }
+
+  function clearPlacedStickers() {
+    placedStickers = [];
+    selectedStickerId = null;
+    renderPlacedStickers();
+  }
+
+  function initStickerDrag() {
+    const layer = document.getElementById('stripStickers');
+    if (!layer) return;
+    let dragState = null;
+
+    layer.addEventListener('pointerdown', e => {
+      const el = e.target.closest('.placed-sticker');
+      if (!el) {
+        // tap on empty area → deselect
+        if (selectedStickerId !== null) {
+          selectedStickerId = null;
+          renderPlacedStickers();
+        }
+        return;
+      }
+      e.preventDefault();
+      const id = parseInt(el.dataset.id, 10);
+      const sticker = placedStickers.find(s => s.id === id);
+      if (!sticker) return;
+
+      // select on touch-down
+      if (selectedStickerId !== id) {
+        selectedStickerId = id;
+        renderPlacedStickers();
+        return; // first tap selects, drag requires second hold — simpler UX
+      }
+
+      const rect = layer.getBoundingClientRect();
+      const startX = e.clientX, startY = e.clientY;
+      const startXPct = sticker.xPct, startYPct = sticker.yPct;
+      dragState = { id, rect, startX, startY, startXPct, startYPct, moved: false };
+      try { layer.setPointerCapture(e.pointerId); } catch(_) {}
+    });
+
+    layer.addEventListener('pointermove', e => {
+      if (!dragState) return;
+      const dx = e.clientX - dragState.startX;
+      const dy = e.clientY - dragState.startY;
+      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) dragState.moved = true;
+      const xPct = dragState.startXPct + (dx / dragState.rect.width) * 100;
+      const yPct = dragState.startYPct + (dy / dragState.rect.height) * 100;
+      updatePlacedSticker(dragState.id, {
+        xPct: Math.max(2, Math.min(98, xPct)),
+        yPct: Math.max(2, Math.min(98, yPct)),
+      });
+    });
+
+    const endDrag = e => {
+      if (dragState) {
+        try { layer.releasePointerCapture(e.pointerId); } catch(_) {}
+      }
+      dragState = null;
+    };
+    layer.addEventListener('pointerup', endDrag);
+    layer.addEventListener('pointercancel', endDrag);
+  }
+
+  // initialize palette + drag once on load
+  initStickerPalette();
+  initStickerDrag();
+  document.getElementById('clearStickersBtn').addEventListener('click', clearPlacedStickers);
+  // deselect when clicking outside the strip
+  document.addEventListener('pointerdown', e => {
+    if (!e.target.closest('.strip-stickers') && !e.target.closest('.sticker-editor') && selectedStickerId !== null) {
+      selectedStickerId = null;
+      renderPlacedStickers();
+    }
+  });
 
   // CSS filter strings (used for live video preview)
   const cssFilterMap = {
@@ -938,8 +1469,59 @@
   bindChipGroup('delayRow', chip => {
     currentDelay = parseInt(chip.dataset.delay, 10);
   });
+  bindChipGroup('layoutRow', chip => {
+    currentLayoutId = chip.dataset.layout;
+    updateCaptureButtonLabel();
+    renderLayoutHint();
+  });
+
+  function updateCaptureButtonLabel() {
+    const L = currentLayout();
+    captureBtn.innerHTML = `◆ Capture · ${L.shots} shot${L.shots > 1 ? 's' : ''}`;
+  }
+
+  function renderLayoutHint(activeIdx) {
+    const L = currentLayout();
+    layoutHint.innerHTML = '';
+    if (L.shots <= 1) {
+      // single — one big cell hint
+      const cell = document.createElement('div');
+      cell.className = 'cell' + (activeIdx === 0 ? ' active' : '');
+      cell.style.cssText = 'top:0;left:0;right:0;bottom:0';
+      const num = document.createElement('span');
+      num.className = 'num';
+      num.textContent = '1';
+      cell.appendChild(num);
+      layoutHint.appendChild(cell);
+      return;
+    }
+    const gapPct = 1.4;
+    const cellW = (100 - gapPct * (L.cols + 1)) / L.cols;
+    const cellH = (100 - gapPct * (L.rows + 1)) / L.rows;
+    for (let r = 0; r < L.rows; r++) {
+      for (let c = 0; c < L.cols; c++) {
+        const idx = r * L.cols + c;
+        if (idx >= L.shots) continue;
+        const cell = document.createElement('div');
+        cell.className = 'cell' + (activeIdx === idx ? ' active' : '');
+        const left = gapPct * (c + 1) + cellW * c;
+        const top  = gapPct * (r + 1) + cellH * r;
+        cell.style.cssText = `left:${left}%;top:${top}%;width:${cellW}%;height:${cellH}%`;
+        const num = document.createElement('span');
+        num.className = 'num';
+        num.textContent = (idx + 1);
+        cell.appendChild(num);
+        layoutHint.appendChild(cell);
+      }
+    }
+  }
+
+  function showLayoutHint(show) {
+    layoutHint.classList.toggle('visible', !!show);
+  }
 
   applyFrame();
+  updateCaptureButtonLabel();
 
   // Start camera
   startBtn.addEventListener('click', async () => {
@@ -966,11 +1548,17 @@
     if (isCapturing) return;
     isCapturing = true;
     photos = [];
+    clearPlacedStickers();  // reset post-capture decorations
     captureBtn.disabled = true;
     resetBtn.disabled = true;
     stripWrap.style.display = 'none';
 
-    for (let i = 0; i < SHOTS; i++) {
+    const shots = currentShots();
+    renderLayoutHint();
+    showLayoutHint(true);
+
+    for (let i = 0; i < shots; i++) {
+      renderLayoutHint(i);  // highlight current cell
       if (currentDelay > 0) {
         await runCountdown(currentDelay);
       } else {
@@ -982,6 +1570,7 @@
       await sleep(700);
     }
 
+    showLayoutHint(false);
     renderStrip();
     isCapturing = false;
     captureBtn.disabled = false;
@@ -1090,6 +1679,8 @@
 
   function renderStrip() {
     stripPhotos.innerHTML = '';
+    // remove old layout classes, add current
+    stripEl.className = 'strip layout-' + currentLayoutId;
     photos.forEach(src => {
       const wrap = document.createElement('div');
       wrap.className = 'strip-photo';
@@ -1109,21 +1700,23 @@
     stripCaption.textContent = captionInput.value || 'CHROMEPIX ◆';
   });
 
-  // Download as composite image
+  // Download as composite image — respects the current layout
   downloadBtn.addEventListener('click', async () => {
     if (photos.length === 0) return;
+    const L = currentLayout();
+    const f = frameStyles[currentFrame] || frameStyles.chrome;
+    const cellW = L.cellW;
+    const cellH = L.cellH;
+    const pad = L.pad;
+    const gap = L.gap;
+    const footerH = L.footerH;
+
     const out = document.createElement('canvas');
-    const photoW = 640;
-    const photoH = 480;
-    const pad = 32;
-    const gap = 18;
-    const footer = 150;
-    out.width = photoW + pad * 2;
-    out.height = pad + (photoH + gap) * photos.length - gap + footer + pad;
+    out.width  = pad * 2 + cellW * L.cols + gap * (L.cols - 1);
+    out.height = pad * 2 + cellH * L.rows + gap * (L.rows - 1) + footerH;
     const c = out.getContext('2d');
 
-    // Background (frame style)
-    const f = frameStyles[currentFrame] || frameStyles.chrome;
+    // 1) Background — frame gradient/solid
     if (f.type === 'gradient') {
       const grad = c.createLinearGradient(0, 0, out.width, out.height);
       f.stops.forEach(([pos, col]) => grad.addColorStop(pos, col));
@@ -1133,55 +1726,107 @@
       c.fillStyle = f.color;
       c.fillRect(0, 0, out.width, out.height);
       if (f.glow) {
-        // soft inner glow effect
-        const g = c.createRadialGradient(out.width/2, out.height/2, 0, out.width/2, out.height/2, out.width*0.7);
-        g.addColorStop(0, 'rgba(255,255,255,0.08)');
-        g.addColorStop(1, 'rgba(0,0,0,0.18)');
-        c.fillStyle = g;
+        const rg = c.createRadialGradient(out.width/2, out.height/2, 0, out.width/2, out.height/2, out.width*0.7);
+        rg.addColorStop(0, 'rgba(255,255,255,0.08)');
+        rg.addColorStop(1, 'rgba(0,0,0,0.18)');
+        c.fillStyle = rg;
         c.fillRect(0, 0, out.width, out.height);
       }
     }
 
-    // Draw photos
-    for (let i = 0; i < photos.length; i++) {
+    // 2) For grid2x2 layout, paint a dark inner backdrop with subtle vignette
+    //    matching the neon reference vibe (regardless of frame color)
+    if (L.neon) {
+      // dark inner card
+      c.fillStyle = 'rgba(10, 9, 24, 0.92)';
+      c.fillRect(pad - 8, pad - 8, out.width - (pad - 8) * 2, out.height - footerH - (pad - 8) * 2 + 16);
+      // subtle radial vignette
+      const vg = c.createRadialGradient(out.width/2, (out.height - footerH)/2, 0, out.width/2, (out.height - footerH)/2, out.width * 0.6);
+      vg.addColorStop(0, 'rgba(77, 229, 255, 0.06)');
+      vg.addColorStop(1, 'rgba(0,0,0,0.35)');
+      c.fillStyle = vg;
+      c.fillRect(pad - 8, pad - 8, out.width - (pad - 8) * 2, out.height - footerH - (pad - 8) * 2 + 16);
+    }
+
+    // 3) Draw photos in grid/strip arrangement
+    for (let i = 0; i < Math.min(photos.length, L.shots); i++) {
       const img = await loadImage(photos[i]);
-      const x = pad;
-      const y = pad + i * (photoH + gap);
+      const col = i % L.cols;
+      const row = Math.floor(i / L.cols);
+      const x = pad + col * (cellW + gap);
+      const y = pad + row * (cellH + gap);
+
       // photo background
-      c.fillStyle = '#14122b';
-      c.fillRect(x, y, photoW, photoH);
-      // cover fit
-      const ratio = Math.max(photoW / img.width, photoH / img.height);
+      c.fillStyle = '#0a0918';
+      c.fillRect(x, y, cellW, cellH);
+
+      // cover-fit image
+      const ratio = Math.max(cellW / img.width, cellH / img.height);
       const dw = img.width * ratio;
       const dh = img.height * ratio;
-      const dx = x + (photoW - dw) / 2;
-      const dy = y + (photoH - dh) / 2;
+      const dx = x + (cellW - dw) / 2;
+      const dy = y + (cellH - dh) / 2;
       c.save();
       c.beginPath();
-      c.rect(x, y, photoW, photoH);
+      c.rect(x, y, cellW, cellH);
       c.clip();
       c.drawImage(img, dx, dy, dw, dh);
       c.restore();
+
+      // neon glow border per cell (for grid2x2)
+      if (L.neon) {
+        c.save();
+        c.strokeStyle = '#4de5ff';
+        c.lineWidth = 3;
+        c.shadowColor = 'rgba(77, 229, 255, 0.85)';
+        c.shadowBlur = 18;
+        c.strokeRect(x + 1.5, y + 1.5, cellW - 3, cellH - 3);
+        c.restore();
+      }
     }
 
-    // Footer text
-    const footY = pad + photos.length * (photoH + gap) - gap + 50;
+    // 3.5) Bake user-placed stickers on top of photos
+    if (placedStickers.length > 0) {
+      const stripStickersEl = document.getElementById('stripStickers');
+      const previewW = stripStickersEl.offsetWidth || 230;
+      const photosW = cellW * L.cols + gap * (L.cols - 1);
+      const photosH = cellH * L.rows + gap * (L.rows - 1);
+      const scale = photosW / previewW;
+      placedStickers.forEach(s => {
+        const x = pad + (s.xPct / 100) * photosW;
+        const y = pad + (s.yPct / 100) * photosH;
+        const sz = s.size * scale;
+        c.save();
+        c.translate(x, y);
+        c.rotate(s.rotation * Math.PI / 180);
+        c.font = `${sz}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif`;
+        c.textAlign = 'center';
+        c.textBaseline = 'middle';
+        c.shadowColor = 'rgba(0,0,0,0.32)';
+        c.shadowBlur = sz * 0.15;
+        c.shadowOffsetY = sz * 0.08;
+        c.fillText(s.emoji, 0, 0);
+        c.restore();
+      });
+    }
+
+    // 4) Footer text
+    const footY = out.height - footerH + footerH * 0.42;
     c.textAlign = 'center';
-    const dark = f.dark;
-    c.fillStyle = dark ? '#f4f5f7' : '#14122b';
+    const useLightText = f.dark || L.neon;
+    c.fillStyle = useLightText ? '#f4f5f7' : '#14122b';
     c.font = '700 42px "Unbounded","Orbitron",sans-serif';
     const caption = (captionInput.value || 'CHROMEPIX ◆').toUpperCase();
-    // letter-spacing simulation
     drawSpacedText(c, caption, out.width / 2, footY, 3);
 
-    c.fillStyle = dark ? 'rgba(244,245,247,0.7)' : 'rgba(20,18,43,0.65)';
+    c.fillStyle = useLightText ? 'rgba(244,245,247,0.7)' : 'rgba(20,18,43,0.65)';
     c.font = '400 20px "Space Grotesk","Inter",sans-serif';
     const d = new Date();
     const dateStr = d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
     drawSpacedText(c, dateStr, out.width / 2, footY + 42, 3);
 
     const link = document.createElement('a');
-    link.download = `chromepix-${Date.now()}.png`;
+    link.download = `chromepix-${currentLayoutId}-${Date.now()}.png`;
     link.href = out.toDataURL('image/png');
     link.click();
     showToast('Downloaded');
